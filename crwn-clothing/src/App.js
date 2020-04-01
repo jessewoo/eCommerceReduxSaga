@@ -7,7 +7,7 @@ import ShopPage from './pages/shop/shop.component';
 import SignInAndSignUpPage from './pages/sign-in-and-sign-up/sign-in-and-sign-up.component';
 
 import Header from './components/header/header.component';
-import { auth } from './firebase/firebase.utils';
+import { auth, createUserProfileDocument } from './firebase/firebase.utils';
 
 class App extends React.Component {
   constructor() {
@@ -23,13 +23,30 @@ class App extends React.Component {
   componentDidMount() {
     // Usually fire off api call, but that's a one off. We don't want to remount the app. We just want to figure out when authentication is done.
     // That's an open subscription, we need to close subscriptions as well because we don't want any memory leaks in our JS
-    this.unsubscribeFromAuth = auth.onAuthStateChanged(user => {
-      this.setState({ currentUser: user });
 
-      // Get user authentication session persistence
-      // Firebase keep track of all the session that is open. User persistence.
-      // oAuth is hard to setup without firebase
-      console.log(user);
+    // Get user authentication session persistence
+    // Firebase keep track of all the session that is open. User persistence.
+    // oAuth is hard to setup without firebase
+
+    this.unsubscribeFromAuth = auth.onAuthStateChanged(async userAuth => {
+      if (userAuth) {
+        // If there was a document there, get back.
+        const userRef = await createUserProfileDocument(userAuth);
+
+        userRef.onSnapshot(snapShot => {
+          this.setState(
+            {
+              currentUser: {
+                id: snapShot.id,
+                ...snapShot.data()
+              }
+            },
+            () => console.log(this.state)
+          );
+        });
+      } else {
+        this.setState({ currentUser: userAuth });
+      }
     });
   }
 
