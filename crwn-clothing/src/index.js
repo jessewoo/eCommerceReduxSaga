@@ -1,15 +1,19 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { BrowserRouter } from 'react-router-dom';
+import { Provider } from 'react-redux';
+import store from './redux/store';
+
 import './index.css';
 import App from './App';
 
 ReactDOM.render(
-  <React.StrictMode>
-    {/* BrowserRoute wrap around our App component, gives our App all routing functionality */}
+  // Provider is a component class that we get from react-redux,
+  // The parent component has access to all the things related to the store
+  <Provider store={store}>
     <BrowserRouter>
       <App />
     </BrowserRouter>
-  </React.StrictMode>,
+  </Provider>,
   document.getElementById('root')
 );
