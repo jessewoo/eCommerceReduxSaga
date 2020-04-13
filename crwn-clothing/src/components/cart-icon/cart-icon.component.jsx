@@ -1,6 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
+import { createStructuredSelector } from 'reselect';
 import { toggleCartHidden } from '../../redux/cart/cart.actions';
 import { selectCartItemsCount } from '../../redux/cart/cart.selector';
 
@@ -28,18 +29,15 @@ const mapDispatchToProps = (dispatch) => ({
 // but the caveat, whenever any reducer updates - it will always return a new object, redux will recompose and rebuild the entire page
 // mapStateToProps is getting every single time, when it's passing in new props to components - it is always RE-RENDERING our component
 //
-const mapStateToProps = (state) => {
+const mapStateToProps = createStructuredSelector({
   // It keep firing whenever state changes. Our reduce() doesn't know if the cartItem might be the exact same
   // Our STATE is always a NEW OBJECT, even though the cart item is identical, the object of our total state is a BRAND NEW OBJECT
   // NOT GOOD FOR PERFORMANCE, don't want to re-render our component every time the state changes, especially modifying the state that we don't care about
   // We want to store the CACHE the value
   // Memoization - caching of the selector values
-  console.log('I am being called');
 
   // Passing whole reducer state into the selector
-  return {
-    itemCount: selectCartItemsCount(state),
-  };
-};
+  itemCount: selectCartItemsCount,
+});
 
 export default connect(mapStateToProps, mapDispatchToProps)(CartIcon);
