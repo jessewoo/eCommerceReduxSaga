@@ -23,7 +23,12 @@
   }
 
   .quantity {
-    padding-left: 20px;
+    display: flex;
+
+    div,
+    span {
+      padding-right: 10px;
+    }
   }
 
   .remove-button {
