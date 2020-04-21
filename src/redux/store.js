@@ -7,6 +7,10 @@ import rootReducer from './root-reducer';
 // There might be multiple middleware
 const middlewares = [logger];
 
+if (process.env.NODE_ENV === 'development') {
+  middlewares.push(logger);
+}
+
 const store = createStore(rootReducer, applyMiddleware(...middlewares));
 
 // Persisted version of our store
