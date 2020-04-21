@@ -5,7 +5,7 @@ import logger from 'redux-logger';
 import rootReducer from './root-reducer';
 
 // There might be multiple middleware
-const middlewares = [logger];
+const middlewares = [];
 
 if (process.env.NODE_ENV === 'development') {
   middlewares.push(logger);
