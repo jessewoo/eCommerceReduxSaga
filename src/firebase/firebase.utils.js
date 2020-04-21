@@ -18,8 +18,13 @@ export const createUserProfileDocument = async (userAuth, additionalData) => {
   const userRef = firestore.doc(`users/${userAuth.uid}`);
   console.log(userRef);
 
+  const collectionRef = firestore.collection('users');
+
   const snapShot = await userRef.get();
   console.log(snapShot);
+
+  const collectionSnapshot = await collectionRef.get();
+  console.log({ collection: collectionSnapshot.docs.map(doc => doc.data()) });
 
   // Create a new user SNAPSHOT
   if (!snapShot.exists) {
@@ -42,6 +47,47 @@ export const createUserProfileDocument = async (userAuth, additionalData) => {
 };
 
 firebase.initializeApp(config);
+
+// DONE ONCE - did all this so we don't have to manually enter each collection and item into Firebase
+export const addCollectionAndDocuments = async (collectionKey, objectsToAdd) => {
+  console.log(collectionKey, objectsToAdd);
+
+  const collectionRef = firestore.collection(collectionKey);
+  console.log(collectionRef);
+
+  // BATCH RIGHT - batch or group all our calls together into one big request
+  const batch = firestore.batch();
+  objectsToAdd.forEach(obj => {
+    const newDocRef = collectionRef.doc();
+    batch.set(newDocRef, obj);
+  })
+
+  return await batch.commit()
+}
+
+export const convertCollectionsSnapshotToMap = (collections) => {
+
+  console.log('---- convertCollectionsSnapshotToMap ----', collections);
+
+  const transformedCollection = collections.docs.map(doc => {
+    const { title, items } = doc.data();
+
+    return {
+      routeName: encodeURI(title.toLowerCase()),
+      id: doc.id,
+      title,
+      items
+    }
+  })
+
+  console.log(transformedCollection);
+
+  return transformedCollection.reduce((accumulator, collection) => {
+    accumulator[collection.title.toLowerCase()] = collection;
+    return accumulator;
+  }, {});
+
+}
 
 export const auth = firebase.auth();
 export const firestore = firebase.firestore();

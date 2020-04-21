@@ -20,11 +20,11 @@ export const selectCollections = createSelector(
 
 export const selectCollectionsForPreview = createSelector(
   [selectCollections],
-  collections => Object.keys(collections).map(key => collections[key])
+  collections => collections ? Object.keys(collections).map(key => collections[key]) : []
 )
 
 // Optimized the QUERY SEARCH, if object of collections GROWS, 100s or 1000s, just as fast to get the last one as fast as first one. 
 // It just looks for the property in the object in order to get the corresponding collection objects
 // Hash Table Data Structure
 export const selectCollection = collectionUrlParam =>
-  createSelector([selectCollections], collections => collections[collectionUrlParam])
+  createSelector([selectCollections], (collections => collections ? collections[collectionUrlParam] : null))

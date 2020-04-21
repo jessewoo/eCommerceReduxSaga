@@ -9,23 +9,15 @@ import SignInAndSignUpPage from './pages/sign-in-and-sign-up/sign-in-and-sign-up
 import CheckoutPage from './pages/checkout/checkout.component';
 
 import Header from './components/header/header.component';
-import { auth, createUserProfileDocument } from './firebase/firebase.utils';
+import { auth, createUserProfileDocument, /* addCollectionAndDocuments */ } from './firebase/firebase.utils';
 import { setCurrentUser } from './redux/user/user.actions';
 
 // Use reselect
 import { createStructuredSelector } from 'reselect';
 import { selectCurrentUser } from './redux/user/user.selector';
+// import { selectCollectionsForPreview } from './redux/shop/shop.selectors'
 
 class App extends React.Component {
-  // Don't need this constructor anymore.
-  // constructor() {
-  //   super();
-
-  //   this.state = {
-  //     currentUser: null
-  //   };
-  // }
-
   unsubscribeFromAuth = null;
 
   componentDidMount() {
@@ -39,7 +31,7 @@ class App extends React.Component {
     // Create User SESSIONS
     // Remember the user on the backend database, and also frontend, need to remember the user as he moves thru ecommerce website
 
-    const { setCurrentUser } = this.props;
+    const { setCurrentUser, /* collectionsArray */ } = this.props;
     this.unsubscribeFromAuth = auth.onAuthStateChanged(async (userAuth) => {
       if (userAuth) {
         // If there was a document there, get back.
@@ -53,6 +45,9 @@ class App extends React.Component {
         });
       } else {
         setCurrentUser(userAuth);
+
+        // DONE ONCE - did all this so we don't have to manually enter each collection and item into Firebase
+        // addCollectionAndDocuments('collections', collectionsArray.map(({ title, items }) => ({ title, items })));
       }
     });
   }
@@ -77,8 +72,8 @@ class App extends React.Component {
               this.props.currentUser ? (
                 <Redirect to="/" />
               ) : (
-                <SignInAndSignUpPage />
-              )
+                  <SignInAndSignUpPage />
+                )
             }
           />
         </Switch>
@@ -89,6 +84,7 @@ class App extends React.Component {
 
 const mapStateToProps = createStructuredSelector({
   currentUser: selectCurrentUser,
+  // collectionsArray: selectCollectionsForPreview
 });
 
 const mapDispatchToProps = (dispatch) => ({
