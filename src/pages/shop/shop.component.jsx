@@ -17,6 +17,7 @@ import CollectionPage from '../collection/collection.component';
 const CollectionsOverviewWithSpinner = WithSpinner(CollectionsOverview);
 const CollectionPageWithSpinner = WithSpinner(CollectionPage);
 
+// The only thing our shop page does is take in the selector and pass them into the component - why KEEP the logic on our shop app
 class ShopPage extends React.Component {
   // Don't use UNSAFE_componentWillMount()
 
