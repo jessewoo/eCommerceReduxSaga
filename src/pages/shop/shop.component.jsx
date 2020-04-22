@@ -26,20 +26,36 @@ class ShopPage extends React.Component {
   unsubscribeFromSnapshot = null;
 
   componentDidMount() {
+    // Live firebase style of passing updates, authStateChanges actually work
     const { updateCollections } = this.props;
     const collectionRef = firestore.collection('collections');
 
-    collectionRef.onSnapshot(async (snapshot) => {
-      console.log('----- COLLECTION REF SNAPSHOT -----', snapshot);
+    // Using a fetch, but it's deeply nested, not worth
+    // fetch(
+    //   'https://firestore.googleapis.com/v1/projects/crwn-db-8c07f/databases/(default)/documents/collections'
+    // )
+    //   .then((response) => response.json())
+    //   .then((collections) => console.log(collections));
 
+    // Using onSnapshot from FIREBASE
+    // collectionRef.onSnapshot(async (snapshot) => {
+    //   console.log('----- COLLECTION REF SNAPSHOT -----', snapshot);
+    //   const collectionsMap = convertCollectionsSnapshotToMap(snapshot);
+    //   console.log(collectionsMap);
+
+    //   // Has data of when the data is finished loading
+    //   // When data comes back, it is good to render the page
+
+    //   updateCollections(collectionsMap);
+    //   this.setState({ loading: false });
+    // });
+
+    // Have it inside a REDUX ACTION
+    //
+    collectionRef.get().then((snapshot) => {
       const collectionsMap = convertCollectionsSnapshotToMap(snapshot);
-      console.log(collectionsMap);
-
       updateCollections(collectionsMap);
       this.setState({ loading: false });
-
-      // Has data of when the data is finished loading
-      // When data comes back, it is good to render the page
     });
   }
 
