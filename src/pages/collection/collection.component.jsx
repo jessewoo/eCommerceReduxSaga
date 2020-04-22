@@ -8,14 +8,15 @@ import './collection.styles.scss';
 
 const CollectionPage = ({ collection }) => {
   // console.log(collection);
+  // It expects a collection but the collection isn't ready yet.
   const { title, items } = collection;
 
   return (
-    <div className="collection-page">
+    <div className='collection-page'>
       <h2>Collection Page</h2>
 
-      <h2 className="title">{title}</h2>
-      <div className="items">
+      <h2 className='title'>{title}</h2>
+      <div className='items'>
         {items.map((item) => (
           <CollectionItem key={item.id} item={item} />
         ))}
@@ -31,7 +32,5 @@ const CollectionPage = ({ collection }) => {
 const mapStateToProps = (state, ownProps) => ({
   collection: selectCollection(ownProps.match.params.collectionId)(state),
 });
-
-// export default CollectionPage;
 
 export default connect(mapStateToProps)(CollectionPage);

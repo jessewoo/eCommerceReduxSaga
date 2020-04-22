@@ -1,13 +1,13 @@
 import React from 'react';
 import { Route } from 'react-router-dom';
+import { createStructuredSelector } from 'reselect';
 import { connect } from 'react-redux';
 
+import { fetchCollectionsStartAsync } from '../../redux/shop/shop.actions';
 import {
-  firestore,
-  convertCollectionsSnapshotToMap,
-} from '../../firebase/firebase.utils';
-
-import { updateCollections } from '../../redux/shop/shop.actions';
+  selectIsCollectionFetching,
+  selectIsCollectionsLoaded,
+} from '../../redux/shop/shop.selectors';
 
 import WithSpinner from '../../components/with-spinner/with-spinner.component';
 import CollectionsOverview from '../../components/collections-overview/collections-overview.component';
@@ -18,63 +18,36 @@ const CollectionsOverviewWithSpinner = WithSpinner(CollectionsOverview);
 const CollectionPageWithSpinner = WithSpinner(CollectionPage);
 
 class ShopPage extends React.Component {
-  // Don't need to invoke constructor and super()
-  state = {
-    loading: true,
-  };
+  // Don't use UNSAFE_componentWillMount()
 
-  unsubscribeFromSnapshot = null;
-
+  // Runs after the initial render call, will take in isCollectionFetching is false (initial)
   componentDidMount() {
-    // Live firebase style of passing updates, authStateChanges actually work
-    const { updateCollections } = this.props;
-    const collectionRef = firestore.collection('collections');
-
-    // Using a fetch, but it's deeply nested, not worth
-    // fetch(
-    //   'https://firestore.googleapis.com/v1/projects/crwn-db-8c07f/databases/(default)/documents/collections'
-    // )
-    //   .then((response) => response.json())
-    //   .then((collections) => console.log(collections));
-
-    // Using onSnapshot from FIREBASE
-    // collectionRef.onSnapshot(async (snapshot) => {
-    //   console.log('----- COLLECTION REF SNAPSHOT -----', snapshot);
-    //   const collectionsMap = convertCollectionsSnapshotToMap(snapshot);
-    //   console.log(collectionsMap);
-
-    //   // Has data of when the data is finished loading
-    //   // When data comes back, it is good to render the page
-
-    //   updateCollections(collectionsMap);
-    //   this.setState({ loading: false });
-    // });
-
-    // Have it inside a REDUX ACTION
-    //
-    collectionRef.get().then((snapshot) => {
-      const collectionsMap = convertCollectionsSnapshotToMap(snapshot);
-      updateCollections(collectionsMap);
-      this.setState({ loading: false });
-    });
+    // Destructure it
+    const { fetchCollectionsStartAsync } = this.props;
+    fetchCollectionsStartAsync();
   }
 
   render() {
-    const { match } = this.props;
-    const { loading } = this.state;
+    const { match, isCollectionFetching, isCollectionsLoaded } = this.props;
     return (
       <div className='shop-page'>
         <Route
           exact
           path={`${match.path}`}
           render={(props) => (
-            <CollectionsOverviewWithSpinner isLoading={loading} {...props} />
+            <CollectionsOverviewWithSpinner
+              isLoading={isCollectionFetching}
+              {...props}
+            />
           )}
         />
         <Route
           path={`${match.path}/:collectionId`}
           render={(props) => (
-            <CollectionPageWithSpinner isLoading={loading} {...props} />
+            <CollectionPageWithSpinner
+              isLoading={!isCollectionsLoaded}
+              {...props}
+            />
           )}
         />
       </div>
@@ -82,9 +55,13 @@ class ShopPage extends React.Component {
   }
 }
 
-const mapDispatchToProps = (dispatch) => ({
-  updateCollections: (collectionMap) =>
-    dispatch(updateCollections(collectionMap)),
+const mapStateToProps = createStructuredSelector({
+  isCollectionFetching: selectIsCollectionFetching,
+  isCollectionsLoaded: selectIsCollectionsLoaded,
 });
 
-export default connect(null, mapDispatchToProps)(ShopPage);
+const mapDispatchToProps = (dispatch) => ({
+  fetchCollectionsStartAsync: () => dispatch(fetchCollectionsStartAsync()),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(ShopPage);

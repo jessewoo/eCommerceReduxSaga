@@ -28,3 +28,16 @@ export const selectCollectionsForPreview = createSelector(
 // Hash Table Data Structure
 export const selectCollection = collectionUrlParam =>
   createSelector([selectCollections], (collections => collections ? collections[collectionUrlParam] : null))
+
+
+export const selectIsCollectionFetching = createSelector(
+  [selectShop],
+  shop => shop.isFetching
+)
+
+// Convert value to truthy or falsy
+// !!0, !!'', !!null = FALSE, !!{} = TRUE, object, even an empty object
+export const selectIsCollectionsLoaded = createSelector(
+  [selectShop],
+  shop => !!shop.collections
+)
