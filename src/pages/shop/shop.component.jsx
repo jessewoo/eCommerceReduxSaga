@@ -1,9 +1,8 @@
 import React from 'react';
 import { Route } from 'react-router-dom';
-import { createStructuredSelector } from 'reselect';
 import { connect } from 'react-redux';
 
-import { fetchCollectionsStartAsync } from '../../redux/shop/shop.actions';
+import { fetchCollectionsStart } from '../../redux/shop/shop.actions';
 
 import CollectionsOverviewContainer from '../../components/collections-overview/collections-overview.container';
 import CollectionPageContainer from '../collection/collection.container';
@@ -14,8 +13,11 @@ class ShopPage extends React.Component {
   // Runs after the initial render call, will take in isCollectionFetching is false (initial)
   componentDidMount() {
     // Destructure it
-    const { fetchCollectionsStartAsync } = this.props;
-    fetchCollectionsStartAsync();
+    const { fetchCollectionsStart } = this.props;
+
+    // We no longer need an asynchronous action like our fetch collections start async to handle that logic
+    // Move all of that into a saga, have saga listen for the start of that API redux chain
+    fetchCollectionsStart();
   }
 
   render() {
@@ -37,7 +39,7 @@ class ShopPage extends React.Component {
 }
 
 const mapDispatchToProps = (dispatch) => ({
-  fetchCollectionsStartAsync: () => dispatch(fetchCollectionsStartAsync()),
+  fetchCollectionsStart: () => dispatch(fetchCollectionsStart()),
 });
 
 export default connect(null, mapDispatchToProps)(ShopPage);

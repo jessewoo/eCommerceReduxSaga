@@ -7,7 +7,7 @@ import { firestore, convertCollectionsSnapshotToMap } from '../../firebase/fireb
 // NOW, we will use a function that returns a function that gets ACCESS TO dispatch...it can fire multiple actions
 
 export const fetchCollectionsStart = () => ({
-  type: ShopActionTypes.FETCH_COLLECTIONS_SUCCESS,
+  type: ShopActionTypes.FETCH_COLLECTIONS_START,
 });
 
 export const fetchCollectionsSuccess = collectionsMap => ({
@@ -38,25 +38,3 @@ export const fetchCollectionsStartAsync = () => {
     }).catch(error => dispatch(fetchCollectionsFailure(error.message)));
   }
 }
-
-    // Live firebase style of passing updates, authStateChanges actually work
-
-    // Using a fetch, but it's deeply nested, not worth
-    // fetch(
-    //   'https://firestore.googleapis.com/v1/projects/crwn-db-8c07f/databases/(default)/documents/collections'
-    // )
-    //   .then((response) => response.json())
-    //   .then((collections) => console.log(collections));
-
-    // Using onSnapshot from FIREBASE
-    // collectionRef.onSnapshot(async (snapshot) => {
-    //   console.log('----- COLLECTION REF SNAPSHOT -----', snapshot);
-    //   const collectionsMap = convertCollectionsSnapshotToMap(snapshot);
-    //   console.log(collectionsMap);
-
-    //   // Has data of when the data is finished loading
-    //   // When data comes back, it is good to render the page
-
-    //   updateCollections(collectionsMap);
-    //   this.setState({ loading: false });
-    // });
