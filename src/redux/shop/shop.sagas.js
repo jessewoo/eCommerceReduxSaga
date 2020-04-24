@@ -1,4 +1,4 @@
-import { takeLatest, call, put } from 'redux-saga/effects';
+import { takeLatest, call, put, all } from 'redux-saga/effects';
 import { firestore, convertCollectionsSnapshotToMap } from '../../firebase/firebase.utils';
 import { fetchCollectionsSuccess, fetchCollectionsFailure } from './shop.actions';
 
@@ -36,3 +36,7 @@ export function* fetchCollectionsStart() {
 // We dont want to fetch that multiple times. 
 // Just want the most recent one that we got
 // Yielding control over this saga back to the middleware - with the ability to CANCEL
+
+export function* shopSagas() {
+  yield all([call(fetchCollectionsStart)])
+}
