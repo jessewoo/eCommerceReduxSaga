@@ -1,14 +1,25 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 
 import CollectionItem from '../../components/collection-item/collection-item.component';
 import { selectCollection } from '../../redux/shop/shop.selectors';
 
+import { firestore } from '../../firebase/firebase.utils'
+
 import './collection.styles.scss';
 
 const CollectionPage = ({ collection }) => {
-  // console.log(collection);
-  // It expects a collection but the collection isn't ready yet.
+  useEffect(() => {
+    console.log("I am subscribing");
+    const unscribeFromCollections = firestore.collection('collections').onSnapshot(snapshot => console.log(snapshot))
+
+    // Clean up function, componenWillUnmount
+    return () => {
+      console.log('I am unsubscribing');
+      unscribeFromCollections();
+    }
+  },[])
+
   const { title, items } = collection;
 
   return (
