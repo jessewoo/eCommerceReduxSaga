@@ -17,7 +17,7 @@ app.use(bodyParser.urlencoded({extended:true}))
 // Cross Origin Request
 app.use(cors());
 
-if(process.env.NODE_ENV === 'productioin') {
+if(process.env.NODE_ENV === 'production') {
   app.use(express.state(path.join(__dirname, 'client/build')))
 
   app.get('*', function(req, res) {
