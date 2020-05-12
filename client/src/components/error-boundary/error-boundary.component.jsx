@@ -28,6 +28,7 @@ class ErrorBoundary extends React.Component {
     console.log(error);
   }
 
+  // https://www.kapwing.com/404-illustrations?ref=producthunt
   render() {
     if (this.state.hasError) {
       return (
